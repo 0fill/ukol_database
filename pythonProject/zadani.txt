@@ -1,0 +1,59 @@
+Správa knižnice filmov
+Cieľ:
+Vytvorte Python aplikáciu, ktorá bude slúžiť na správu knižnice filmov. Aplikácia bude
+používať SQLite databázu na uchovávanie informácií o filmoch, hercoch a režiséroch.
+Cieľom je umožniť užívateľovi pridávať, upravovať, vyhľadávať a odstraňovať filmy, hercov a
+režisérov.
+Požiadavky:
+
+
+1. Databázová štruktúra:
+
+○ Tabuľka movies:
+    ■ id (INTEGER, PRIMARY KEY, AUTOINCREMENT)
+    ■ title (TEXT, NOT NULL)
+    ■ release_year (INTEGER)
+    ■ genre (TEXT)
+    ■ director_id (INTEGER, FOREIGN KEY na directors.id)
+
+○ Tabuľka actors:
+    ■ id (INTEGER, PRIMARY KEY, AUTOINCREMENT)
+    ■ name (TEXT, NOT NULL)
+    ■ birth_year (INTEGER)
+
+○ Tabuľka directors:
+    ■ id (INTEGER, PRIMARY KEY, AUTOINCREMENT)
+    ■ name (TEXT, NOT NULL)
+    ■ birth_year (INTEGER)
+
+○ Tabuľka movie_actors:
+    ■ movie_id (INTEGER, FOREIGN KEY na movies.id)
+    ■ actor_id (INTEGER, FOREIGN KEY na actors.id)
+    ■ Primárny kľúč: (movie_id, actor_id)
+
+
+2. Funkcionalita aplikácie:
+
+○ Pridávanie údajov:
+    ■ Pridajte nový film so všetkými údajmi (idealne vrátane režiséra a hercov).
+    ■ Pridajte nového herca alebo režiséra.
+
+○ Vyhľadávanie filmov:
+    ■ Vyhľadávajte filmy podľa názvu, roku vydania, žánru alebo režiséra.
+    ■ Zobrazte zoznam filmov, v ktorých hral konkrétny herec.
+
+○ Zoznam všetkých filmov:
+    ■ Zobrazte zoznam všetkých filmov v databáze, vrátane režiséra a zoznamu hercov.
+
+
+3. Používateľské rozhranie:
+    ○ Použite jednoduché textové rozhranie, kde používateľ zadáva príkazy na
+    pridávanie, úpravu, vyhľadávanie a mazanie údajov.
+
+
+4. Ošetrenie chýb:
+    ○ Ošetrite prípady, keď sa používateľ pokúsi pridať neplatné alebo
+    nekonzistentné údaje (napr. pokus o priradenie neexistujúceho režiséra k
+    filmu).
+    ○ Zabezpečte ochranu pred SQL injection pomocou parametrizovaných
+    dotazov.
