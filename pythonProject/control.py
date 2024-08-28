@@ -1,12 +1,12 @@
-def insert_directors(name, birth_year,cursor=c):
+def add_director(name, birth_year,cursor=c):
     cursor.execute(f"""INSERT INTO directors
               VALUES ({name}, {birth_year});""")
 
-def insert_actors(name, birth_year,cursor=c):
+def add_actor(name, birth_year, cursor=c):
     cursor.execute(f"""INSERT INTO actors
                         VALUES ({name}, {birth_year});""")
 
-def insert_films(title,release_year, genre, director_id,cursor,actors:tuple):
+def add_films(title,release_year, genre, director_id,cursor,actors:tuple):
     cursor.execute(f"""INSERT INTO movies
                     VALUES ({title},{release_year},{genre},{director_id});""")
     cursor.execute(f"""INSERT INTO movie_actors (movie_id, actor_id)

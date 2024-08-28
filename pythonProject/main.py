@@ -1,114 +1,54 @@
 import sqlite3
+from models import *
+from control import *
+from view import *
 
-conn = sqlite3.connect("data.sql")
-c = conn.cursor()
+database = database("data.sql")
+cur = database.conn.cursor()
 
-c.execute("""CREATE TABLE IF NOT EXISTS directors(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-name TEXT NOT NULL,
-birth_year INTEGER
-)""")
+def run(cursor):
+    while True:
+        main_menu()
+        choice = get_choice()
+        if choice == "1":       #pridat
+            menu_add()
+            choice = get_choice()
+            if choice == "1":      #pridam film
+                a,b = get_film()
+                add_films()
+            elif choice == "2":     #pridam rezisera
+                a,b = get_director()
+                add_director(a,b)
+            elif choice == "3":      #pridam herce
+                a,b = get_actor()
+                add_actor(a, b, cursor)
+            else:
+                continue
+        elif choice == "2":     #zobrazit
+            menu_display()
+            choice = get_choice()
+            if choice == "1":   #zobrazit vse
+                list_films(cursor)
+            elif choice == "2": #zobrazit podle jmena
+                a = get_filmname()
+                display_films(search_film_name(a, cursor))
+            elif choice == "3":     #zobrazit podle roku
+                a = get_year()
+                display_films(search_film_year(a, cursor))
+            elif choice == "4":     #zobrazit podle zanru
+                a = get_genre()
+                display_films(search_film_genre(a, cursor))
+            elif choice == "5":     #zobrazit podle razisera
+                a = get_director
+                display_films(search_film_genre(a, cursor))
+            elif choice == "6":     #zobrazit podle hercu
+                a = get_actor()
+                display_films(search_film_actor(a, cursor))
+            else:
+                continue
+        elif choice == "3":     #exit
+            break
 
-
-c.execute("""CREATE TABLE IF NOT EXISTS movies(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-title TEXT NOT NULL,
-release_year INTEGER,
-genre TEXT,
-director_id INTEGER,
-FOREIGN KEY (director_id) REFERENCES directors(id));""")
-
-c.execute("""CREATE TABLE IF NOT EXISTS actors(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-name TEXT NOT NULL,
-birth_year INTEGER
-)""")
-
-
-c.execute("""CREATE TABLE IF NOT EXISTS movie_actors(
-movie_id INTEGER, 
-actor_id INTEGER,
-FOREIGN KEY(movie_id) REFERENCES movies(id),
-FOREIGN KEY(actor_id) REFERENCES actors(id))
-;""")
-
-conn.commit()
-
-def insert_directors(name, birth_year,cursor=c):
-    cursor.execute(f"""INSERT INTO directors
-              VALUES ({name}, {birth_year});""")
-
-def insert_actors(name, birth_year,cursor=c):
-    cursor.execute(f"""INSERT INTO actors
-                        VALUES ({name}, {birth_year});""")
-
-def insert_films(title,release_year, genre, director_id,cursor,actors:tuple):
-    cursor.execute(f"""INSERT INTO movies
-                    VALUES ({title},{release_year},{genre},{director_id});""")
-    cursor.execute(f"""INSERT INTO movie_actors (movie_id, actor_id)
-                        SELECT 
-                            movies.id AS movie_id,
-                            actors.id AS actor_id
-                        FROM 
-                            movies
-                            INNER JOIN actors ON a.name IN ({actors})
-                        WHERE 
-                            movie.title = '{title}';""")
-
-def search_film_name(name,cursor=c):
-    cursor.execute(f"""SELECT * FROM movie_actors
-                        WHERE name LIKE '%{name}%';""")
-    return cursor.fetchall()
-def search_film_year(year,cursor=c):
-    cursor.execute(f"""SELECT * FROM movies
-                                WHERE {year} = release_year;""")
-    return cursor.fetchall()
-def search_film_genre(genre,cursor=c):
-    cursor.execute(f"""SELECT * FROM movies
-                               WHERE genre LIKE '%{genre}%';""")
-    return cursor.fetchall()
-def search_film_director(director,cursor=c):
-    cursor.execute(f"""SELECT 
-            movies.*
-        FROM 
-            movies
-        INNER JOIN 
-            directors ON movies.director_id = directors.director_id
-        WHERE 
-            directors.name = %{director}%;
-                        """)
-    return cursor.fetchall()
-
-def search_film_actor(actor: str,cursor=c):
-    cursor.execute(f"""SELECT 
-            movies.*
-        FROM 
-            movies
-        INNER JOIN 
-            movie_actors ON movies.id = movie_actors.movie_id
-        INNER JOIN 
-            actors ON actors.id = movie_actors.director_id
-        WHERE 
-            actors.name = {actor};
-    """)
-    return cursor.fetchall()
-
-def list_films(cursor=c):
-    cursor.execute(f"""SELECT 
-            movies.*
-            drectors.name
-            actors.name
-        FROM 
-            movies
-        INNER JOIN 
-            movie_actors ON movies.id = movie_actors.movie_id
-        INNER JOIN 
-            directors ON directors.id = movie_actors.director_id
-        INNER JOIN 
-            actors ON actors.id = movie_actors.actor_id
-    ;""")
-    return cursor.fetchall()
-
-
+run(cur)
 
 
